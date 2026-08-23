@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: modelforge-api
+    runtime: python
+    plan: free
+    buildCommand: pip install -e .
+    startCommand: uvicorn modelforge_llmops.api.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: CONTROL_PLANE_MODE
+        value: demo
