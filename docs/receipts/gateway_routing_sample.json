@@ -1,0 +1,29 @@
+{
+  "receipt_id": "gateway-routing-sample-v1",
+  "status": "sample",
+  "honesty": "Synthetic RoutingDecision sample for LLMOps panels — not a production audit log export.",
+  "adr": ["ADR-028", "ADR-029"],
+  "flow": "app_selects → gateway_enforces → gateway_records → finops_optional",
+  "decision": {
+    "request_id": "req_demo_001",
+    "tenant_id": "demo",
+    "principal_id": "panel-reviewer",
+    "selected_by_app": {
+      "provider": "ollama",
+      "model": "llama3.2:3b",
+      "reason": "schema_json_private_data"
+    },
+    "enforced_by_gateway": {
+      "allowed": true,
+      "policy": "data_class:internal → allow_local_slm",
+      "denied_alternatives": ["openai/gpt-4o"]
+    },
+    "recorded": {
+      "latency_ms": 42,
+      "tokens_in": 128,
+      "tokens_out": 64,
+      "est_cost_usd": 0.0
+    }
+  },
+  "panel_one_liner": "Apps select models; the LLM gateway enforces and records — ModelForge shows the receipt, Aegis gateway owns the plane."
+}

@@ -59,8 +59,13 @@ export function buildPosture() {
       {
         id: "gateway",
         label: "LLM gateway bridge",
-        status: "partial" as const,
-        detail: "Wire LLM_GATEWAY_URL / sample RoutingDecision (Phase 4)",
+        status: (receipts.find((r) => r.id === "gateway-sample")?.status ===
+        "published"
+          ? "ready"
+          : "partial") as "ready" | "partial",
+        detail:
+          receipts.find((r) => r.id === "gateway-sample")?.summary ??
+          "Wire LLM_GATEWAY_URL / sample RoutingDecision (Phase 4)",
       },
     ] satisfies PlaneComponent[],
     non_goals: [

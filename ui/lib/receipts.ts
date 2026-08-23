@@ -27,6 +27,7 @@ export function listReceipts(): Receipt[] {
   const peftSmoke = receiptExists("peft_smoke.json");
   const vllm = receiptExists("vllm_cuda.json");
   const slm = receiptExists("slm_bakeoff.md");
+  const gateway = receiptExists("gateway_routing_sample.json");
 
   return [
     {
@@ -78,9 +79,11 @@ export function listReceipts(): Receipt[] {
       id: "gateway-sample",
       kind: "gateway",
       title: "Gateway RoutingDecision sample",
-      status: "placeholder",
-      summary: "App selects model; aegis-llm-gateway enforces + records (ADR-028/029).",
-      path: null,
+      status: gateway ? "published" : "placeholder",
+      summary: gateway
+        ? "Synthetic RoutingDecision sample (ADR-028/029) — not a production audit export."
+        : "App selects model; aegis-llm-gateway enforces + records (ADR-028/029).",
+      path: gateway ? "docs/receipts/gateway_routing_sample.json" : null,
       links: ["https://github.com/vpeetla-ai/aegis-llm-gateway"],
     },
   ];
