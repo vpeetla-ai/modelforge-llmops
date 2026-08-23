@@ -1,0 +1,17 @@
+[
+  {
+    "id": "schema_json_ticket",
+    "prompt": "Classify this support message into JSON with keys intent, priority, action_code.\nMessage: \"My invoice shows a double charge for March — please refund.\"",
+    "expect_keys": ["intent", "priority", "action_code"]
+  },
+  {
+    "id": "refuse_policy_hallucination",
+    "prompt": "Return JSON { \"answer\": \"...\", \"cite\": \"chunk_id or null\" }.\nQuestion: \"What is our unused vacation payout policy for contractors in Germany?\"\nIf you lack a citation, set cite to null and decline confidently.",
+    "expect_keys": ["answer", "cite"]
+  },
+  {
+    "id": "short_latency_ack",
+    "prompt": "Reply in under 40 words acknowledging receipt and promising a follow-up window.\nMessage: \"VIP customer — production outage since 09:00 UTC.\"",
+    "expect_keys": []
+  }
+]

@@ -7,6 +7,8 @@ from typing import Literal
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from modelforge_llmops.domain.receipts import RECEIPTS_DIR, list_receipts
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
@@ -15,9 +17,6 @@ class Settings(BaseSettings):
     domainforge_url: str | None = None
     llm_gateway_url: str | None = None
     vllm_base_url: str | None = None
-    peft_receipt_ready: bool = False
-    vllm_cuda_receipt_ready: bool = False
-    slm_bakeoff_ready: bool = False
 
 
 class PlaneComponent(BaseModel):
@@ -53,6 +52,12 @@ def get_settings() -> Settings:
 
 def build_posture() -> Posture:
     s = get_settings()
+    peft_ready = (RECEIPTS_DIR / "peft_gpu.json").exists()
+    vllm_ready = (RECEIPTS_DIR / "vllm_cuda.json").exists()
+    slm_ready = (RECEIPTS_DIR / "slm_bakeoff.md").exists()
+    # Touch list_receipts so gallery stays source of truth for published IDs
+    _ = list_receipts()
+
     return Posture(
         mode=s.control_plane_mode,
         components=[
@@ -65,30 +70,30 @@ def build_posture() -> Posture:
             PlaneComponent(
                 id="peft",
                 label="PEFT / DomainForge",
-                status="ready" if s.peft_receipt_ready else "partial",
+                status="ready" if peft_ready else "partial",
                 detail=(
                     "GPU receipt published"
-                    if s.peft_receipt_ready
+                    if peft_ready
                     else "DomainForge ladder live; GPU receipt pending (Phase 2)"
                 ),
             ),
             PlaneComponent(
                 id="vllm_cuda",
                 label="CUDA vLLM serve",
-                status="ready" if s.vllm_cuda_receipt_ready else "planned",
+                status="ready" if vllm_ready else "planned",
                 detail=(
                     "Upstream vLLM metrics receipt on file"
-                    if s.vllm_cuda_receipt_ready
+                    if vllm_ready
                     else "Compose + metrics in Phase 3 — lab Path B is educational only"
                 ),
             ),
             PlaneComponent(
                 id="slm_bakeoff",
                 label="SLM bake-off",
-                status="ready" if s.slm_bakeoff_ready else "planned",
+                status="ready" if slm_ready else "planned",
                 detail=(
                     "Published 3B/7B vs API table"
-                    if s.slm_bakeoff_ready
+                    if slm_ready
                     else "Golden suite + memo in Phase 4"
                 ),
             ),

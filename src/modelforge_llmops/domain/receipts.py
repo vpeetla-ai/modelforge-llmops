@@ -21,14 +21,17 @@ class Receipt(BaseModel):
 
 
 def list_receipts() -> list[Receipt]:
-    catalog = [
+    peft = RECEIPTS_DIR / "peft_gpu.json"
+    vllm = RECEIPTS_DIR / "vllm_cuda.json"
+    slm = RECEIPTS_DIR / "slm_bakeoff.md"
+    return [
         Receipt(
             id="peft-gpu",
             kind="peft",
             title="QLoRA + DPO GPU receipt",
-            status="published" if (RECEIPTS_DIR / "peft_gpu.json").exists() else "placeholder",
+            status="published" if peft.exists() else "placeholder",
             summary="S0 vs S3 vs S4 eval delta after CUDA QLoRA/DPO run (DomainForge).",
-            path="docs/receipts/peft_gpu.json" if (RECEIPTS_DIR / "peft_gpu.json").exists() else None,
+            path="docs/receipts/peft_gpu.json" if peft.exists() else None,
             links=[
                 "https://github.com/vpeetla-ai/domainforge-rag-peft",
                 "https://github.com/vpeetla-ai/ai-architecture-portfolio/blob/main/adr/ADR-019-rag-facts-peft-behavior.md",
@@ -38,13 +41,9 @@ def list_receipts() -> list[Receipt]:
             id="vllm-cuda",
             kind="vllm_cuda",
             title="Upstream vLLM CUDA + LoRA metrics",
-            status="published"
-            if (RECEIPTS_DIR / "vllm_cuda.json").exists()
-            else "placeholder",
+            status="published" if vllm.exists() else "placeholder",
             summary="TTFT / tok/s / VRAM from real vLLM (not Architecture Lab Path B).",
-            path="docs/receipts/vllm_cuda.json"
-            if (RECEIPTS_DIR / "vllm_cuda.json").exists()
-            else None,
+            path="docs/receipts/vllm_cuda.json" if vllm.exists() else None,
             links=[
                 "https://github.com/vpeetla-ai/vllm-architecture-lab",
                 "https://github.com/vpeetla-ai/ai-architecture-portfolio/blob/main/adr/ADR-022-domainforge-vllm-multi-lora-serving.md",
@@ -54,13 +53,9 @@ def list_receipts() -> list[Receipt]:
             id="slm-bakeoff",
             kind="slm_bakeoff",
             title="SLM vs API bake-off",
-            status="published"
-            if (RECEIPTS_DIR / "slm_bakeoff.md").exists()
-            else "placeholder",
+            status="published" if slm.exists() else "placeholder",
             summary="Same golden suite: local 3B/7B vs cloud API — cost, latency, schema pass.",
-            path="docs/receipts/slm_bakeoff.md"
-            if (RECEIPTS_DIR / "slm_bakeoff.md").exists()
-            else None,
+            path="docs/receipts/slm_bakeoff.md" if slm.exists() else None,
             links=["https://github.com/vpeetla-ai/domainforge-rag-peft"],
         ),
         Receipt(
@@ -72,7 +67,6 @@ def list_receipts() -> list[Receipt]:
             links=["https://github.com/vpeetla-ai/aegis-llm-gateway"],
         ),
     ]
-    return catalog
 
 
 def plane_summary() -> dict:

@@ -55,15 +55,33 @@ cd ui && npm install && npm run dev
 # set NEXT_PUBLIC_API_URL=http://127.0.0.1:8200
 ```
 
-## Interview map
+## SLM bake-off (Phase 4)
 
-| Topic | How this repo proves it |
-|-------|-------------------------|
-| SLM vs LLM | Bake-off tab + receipt (Phase 4) |
-| PEFT / QLoRA / DPO | PEFT tab → DomainForge + GPU receipt (Phase 2) |
-| CUDA / vLLM | Serve tab → upstream compose + metrics (Phase 3) |
-| LLMOps | Ops tab → gateway posture + routing sample |
-| Agents (peer) | Links to AegisAI / VAP — not duplicated here |
+```bash
+# Ollama OpenAI-compatible shim (example)
+python scripts/slm_bakeoff.py --base-url http://127.0.0.1:11434 --model llama3.2:3b --label ollama-3b
+# Cloud API
+OPENAI_API_KEY=... python scripts/slm_bakeoff.py --base-url https://api.openai.com --model gpt-4o-mini --api-key "$OPENAI_API_KEY" --label api-4o-mini
+```
+
+Writes/appends `docs/receipts/slm_bakeoff.md`.
+
+## CUDA vLLM (Phase 3)
+
+```bash
+# On a GPU host only
+docker compose -f docker-compose.vllm.yml up
+# Capture metrics → docs/receipts/vllm_cuda.json (see docs/PHASE3_VLLM_CUDA_RECEIPT.md)
+```
+
+## Live probes
+
+```bash
+export DOMAINFORGE_URL=https://domainforge-api.onrender.com
+export LLM_GATEWAY_URL=https://aegis-llm-gateway-api.onrender.com
+curl -s localhost:8200/v1/probes | jq
+```
+
 
 ## Related
 

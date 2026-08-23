@@ -1,0 +1,43 @@
+# Upstream vLLM on a CUDA host (Path A — production-shaped).
+# NOT the educational vllm-architecture-lab simulator.
+#
+# Usage (GPU machine):
+#   export HF_TOKEN=...   # if gated model
+#   docker compose -f docker-compose.vllm.yml up
+#   curl localhost:8000/v1/models
+#
+# Then capture metrics into docs/receipts/vllm_cuda.json (see docs/PHASE3_VLLM_CUDA_RECEIPT.md).
+
+services:
+  vllm:
+    image: vllm/vllm-openai:v0.8.5
+    runtime: nvidia
+    environment:
+      HUGGING_FACE_HUB_TOKEN: ${HF_TOKEN:-}
+    command:
+      - --model
+      - ${VLLM_MODEL:-mistralai/Mistral-7B-Instruct-v0.3}
+      - --enable-lora
+      - --max-lora-rank
+      - "64"
+      - --gpu-memory-utilization
+      - "0.90"
+      - --max-model-len
+      - "4096"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ${HOME}/.cache/huggingface:/root/.cache/huggingface
+      - ${LORA_ADAPTER_DIR:-./adapters}:/adapters:ro
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 10

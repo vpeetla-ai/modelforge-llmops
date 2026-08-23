@@ -31,3 +31,11 @@ def test_plane_summary() -> None:
     r = client.get("/v1/plane")
     assert r.status_code == 200
     assert r.json()["name"] == "ModelForge"
+
+
+def test_probes_without_urls() -> None:
+    r = client.get("/v1/probes")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["domainforge"]["configured"] is False
+    assert body["llm_gateway"]["configured"] is False
