@@ -1,0 +1,15 @@
+{
+  "run_id": "vllm-cuda-PENDING",
+  "status": "template",
+  "honesty": "Fill on a CUDA host after docker compose -f docker-compose.vllm.yml up. Not Architecture Lab Path B.",
+  "engine": "vllm",
+  "engine_version": null,
+  "gpu": null,
+  "base_model": "mistralai/Mistral-7B-Instruct-v0.3",
+  "lora": false,
+  "ttft_p50_ms": null,
+  "ttft_p95_ms": null,
+  "tok_per_s": null,
+  "vram_gb": null,
+  "notes": "Capture with scripts/capture_vllm_metrics.py"
+}

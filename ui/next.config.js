@@ -1,9 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // Static export — matches Vercel Output Directory `out`
-  output: "export",
-  images: { unoptimized: true },
+  // Serverful Next.js on Vercel so /api/* hosts ModelForge posture + receipts
 };
 
 module.exports = nextConfig;

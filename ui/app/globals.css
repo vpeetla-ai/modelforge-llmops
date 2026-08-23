@@ -85,6 +85,17 @@ main {
   border-color: #2f6f5f;
 }
 
+.pill.smoke {
+  color: #c4a35a;
+  border-color: #6e5a2e;
+}
+
+.pill.partial,
+.pill.planned {
+  color: var(--warn, #c4a35a);
+  border-color: #6e5a2e;
+}
+
 .pill.external {
   color: #7aa2c7;
   border-color: #3a5470;

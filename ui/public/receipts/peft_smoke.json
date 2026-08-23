@@ -1,0 +1,19 @@
+{
+  "run_id": "peft-smoke-PLACEHOLDER",
+  "status": "smoke_fixture",
+  "honesty": "NOT a CUDA GPU training receipt. Deterministic fixture to prove ModelForge receipt ingestion. Replace with DomainForge export after GPU pipeline.",
+  "base_model": "mistralai/Mistral-7B-Instruct-v0.3",
+  "gpu": null,
+  "device": "cpu-fixture",
+  "sft_examples": 128,
+  "dpo_pairs": 64,
+  "metrics": {
+    "S0_schema_pass": 0.42,
+    "S3_schema_pass": 0.78,
+    "S4_schema_pass": 0.86,
+    "S4_preference_win_rate": 0.61
+  },
+  "adapter_uri": null,
+  "notes": "RAG owns facts; PEFT owns schema/behavior (ADR-019/020).",
+  "replacement_command": "cd ../domainforge-rag-peft && bash scripts/gpu_pipeline.sh && make export-modelforge-receipt"
+}

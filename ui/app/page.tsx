@@ -25,7 +25,7 @@ type Receipt = {
   summary: string;
 };
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8200";
+const API = process.env.NEXT_PUBLIC_API_URL || "";
 
 export default function HomePage() {
   const [posture, setPosture] = useState<Posture | null>(null);
@@ -33,9 +33,10 @@ export default function HomePage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const base = API.replace(/\/$/, "");
     Promise.all([
-      fetch(`${API}/v1/posture`).then((r) => r.json()),
-      fetch(`${API}/v1/receipts`).then((r) => r.json()),
+      fetch(`${base}/api/v1/posture`).then((r) => r.json()),
+      fetch(`${base}/api/v1/receipts`).then((r) => r.json()),
     ])
       .then(([p, rec]) => {
         setPosture(p);
@@ -58,8 +59,8 @@ export default function HomePage() {
 
       {error ? (
         <p style={{ color: "var(--warn)", marginTop: "1.5rem" }}>
-          API unreachable at {API}. Start uvicorn on :8200 or set
-          NEXT_PUBLIC_API_URL. ({error})
+          API unreachable ({error}). Same-origin /api should work on Vercel; for
+          local UI-only, run `npm run dev` in ui/.
         </p>
       ) : null}
 

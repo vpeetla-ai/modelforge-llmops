@@ -1,11 +1,15 @@
 services:
   - type: web
     name: modelforge-api
-    runtime: python
+    runtime: docker
     plan: free
-    buildCommand: pip install -e .
-    startCommand: uvicorn modelforge_llmops.api.main:app --host 0.0.0.0 --port $PORT
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
     healthCheckPath: /health
     envVars:
       - key: CONTROL_PLANE_MODE
         value: demo
+      - key: DOMAINFORGE_URL
+        value: https://domainforge-api.onrender.com
+      - key: LLM_GATEWAY_URL
+        value: https://aegis-llm-gateway-api.onrender.com
