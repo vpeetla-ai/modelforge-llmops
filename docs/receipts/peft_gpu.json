@@ -1,0 +1,19 @@
+{
+  "status": "gpu",
+  "cuda": true,
+  "honesty": "CUDA PEFT micro-run (GCP T4, fp16 LoRA) with measured schema-pass delta \u2014 not peft_smoke. Not a DomainForge 7B S0/S3/S4 hire-depth ladder; use RunPod DomainForge pipeline for that.",
+  "run_id": "peft-20260824T005657Z",
+  "base_model": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+  "gpu": "1x Tesla T4",
+  "method": "LoRA-fp16",
+  "sft_examples": 48,
+  "dpo_pairs": 0,
+  "metrics": {
+    "S0_schema_pass": 0.3333333333333333,
+    "S3_schema_pass": 0.3333333333333333,
+    "delta_schema_pass": 0.0,
+    "train_loss": 9.84547253449758
+  },
+  "adapter_uri": "/tmp/peft_out/adapter",
+  "nvidia_smi_excerpt": "Mon Aug 24 00:56:33 2026       \n+-----------------------------------------------------------------------------------------+\n| NVIDIA-SMI 580.173.02             Driver Version: 580.173.02     CUDA Version: 13.0     |\n+-----------------------------------------+------------------------+----------------------+\n| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n|                                         |                        |               MIG M. |\n|==============="
+}

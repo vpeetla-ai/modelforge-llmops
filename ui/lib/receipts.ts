@@ -43,7 +43,7 @@ export function listReceipts(): Receipt[] {
       title: "QLoRA + DPO GPU receipt",
       status: peftGpu ? "published" : peftSmoke ? "smoke" : "placeholder",
       summary: peftGpu
-        ? "S0 vs S3 vs S4 eval delta after CUDA QLoRA/DPO (DomainForge)."
+        ? "CUDA PEFT receipt published (see peft_gpu.json honesty — micro LoRA on T4 or DomainForge 7B ladder)."
         : peftSmoke
           ? "Smoke fixture only — NOT a CUDA GPU receipt. Replace after GPU pipeline."
           : "Pending DomainForge CUDA export → docs/receipts/peft_gpu.json",

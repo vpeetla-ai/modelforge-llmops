@@ -91,6 +91,7 @@ def main() -> None:
         "lora": False,
         "ttft_p50_ms": round(statistics.median(ttfts), 2),
         "ttft_p95_ms": round(sorted(ttfts)[max(0, int(0.95 * len(ttfts)) - 1)], 2),
+        # validator accepts ttft_p50_ms OR tok_per_s
         "tok_per_s": round(statistics.mean(toks), 2) if toks else None,
         "samples": args.n,
         "base_url": args.base_url,
