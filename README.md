@@ -96,3 +96,14 @@ curl -s localhost:8200/v1/probes | jq
 - Live demo: https://modelforge-gamma.vercel.app
 - Receipts: `docs/receipts/` (mirrored to `ui/public/receipts/`)
 
+## Closing CUDA receipts (Phases 2–3)
+
+This laptop has no NVIDIA GPU. On RunPod / Lambda:
+
+```bash
+export GPU_SKU="1x A100-40GB" HF_TOKEN=...
+bash scripts/one_shot_gpu_receipts.sh
+```
+
+See [docs/RUNPOD_ONE_SHOT.md](docs/RUNPOD_ONE_SHOT.md). CI refuses empty `peft_gpu.json` / `vllm_cuda.json` stubs.
+

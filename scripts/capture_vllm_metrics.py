@@ -15,6 +15,31 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "docs" / "receipts" / "vllm_cuda.json"
 
 
+def _cuda_proof(require: bool, smi_log: Path | None) -> dict:
+    import subprocess
+
+    cuda = False
+    device = None
+    try:
+        import torch
+
+        cuda = bool(torch.cuda.is_available())
+        device = torch.cuda.get_device_name(0) if cuda else None
+    except ImportError:
+        cuda = False
+    if require and not cuda:
+        raise SystemExit("CUDA required — refuse vllm_cuda.json without a live GPU")
+    smi = ""
+    if smi_log and smi_log.exists():
+        smi = smi_log.read_text()[:4000]
+    elif require:
+        try:
+            smi = subprocess.check_output(["nvidia-smi"], text=True)[:4000]
+        except (FileNotFoundError, subprocess.CalledProcessError):
+            smi = ""
+    return {"cuda": cuda, "cuda_device": device, "nvidia_smi_excerpt": smi}
+
+
 def main() -> None:
     p = argparse.ArgumentParser()
     p.add_argument("--base-url", default="http://127.0.0.1:8000")
@@ -22,7 +47,11 @@ def main() -> None:
     p.add_argument("--n", type=int, default=5)
     p.add_argument("--prompt", default='Reply with a one-line JSON object: {"ok": true}')
     p.add_argument("--gpu", default="operator-reported")
+    p.add_argument("--require-cuda", action="store_true")
+    p.add_argument("--nvidia-smi-log", type=Path, default=None)
     args = p.parse_args()
+
+    proof = _cuda_proof(args.require_cuda, args.nvidia_smi_log)
 
     ttfts: list[float] = []
     toks: list[float] = []
@@ -52,10 +81,13 @@ def main() -> None:
     receipt = {
         "run_id": f"vllm-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}",
         "status": "published",
+        "cuda": bool(proof["cuda"]) if args.require_cuda else False,
         "honesty": "Captured against upstream vLLM OpenAI server — not Architecture Lab Path B.",
         "engine": "vllm",
         "base_model": args.model,
         "gpu": args.gpu,
+        "cuda_device": proof.get("cuda_device"),
+        "nvidia_smi_excerpt": proof.get("nvidia_smi_excerpt") or "",
         "lora": False,
         "ttft_p50_ms": round(statistics.median(ttfts), 2),
         "ttft_p95_ms": round(sorted(ttfts)[max(0, int(0.95 * len(ttfts)) - 1)], 2),
