@@ -77,6 +77,11 @@ export default function HomePage() {
   const pending = receipts.filter(
     (r) => r.status === "placeholder" || r.status === "planned",
   ).length;
+  const peftReady =
+    posture?.components.find((c) => c.id === "peft")?.status === "ready";
+  const vllmReady =
+    posture?.components.find((c) => c.id === "vllm_cuda")?.status === "ready";
+  const gpuReceiptsDone = Boolean(peftReady && vllmReady);
 
   return (
     <main>
@@ -163,8 +168,8 @@ export default function HomePage() {
       <section style={{ marginTop: "2.5rem" }}>
         <h2 style={{ marginBottom: "0.25rem" }}>Receipts</h2>
         <p style={{ color: "var(--muted)", marginTop: 0 }}>
-          Published artifacts are clickable. Smoke ≠ GPU. Placeholders mean CUDA
-          host still required (RunPod) — posture stays honest.
+          Published artifacts are clickable. Smoke ≠ GPU. Honesty fields in each
+          receipt JSON describe micro-run vs DomainForge 7B ladder depth.
         </p>
         <table>
           <thead>
@@ -203,40 +208,62 @@ export default function HomePage() {
         </table>
       </section>
 
-      <section style={{ marginTop: "2rem" }}>
-        <h2>CUDA receipts — operator unblock</h2>
-        <p style={{ color: "var(--muted)" }}>
-          This demo host has no NVIDIA GPU. Phases 2–3 flip to{" "}
-          <code>ready</code> only after RunPod (or equivalent) produces{" "}
-          <code>peft_gpu.json</code> + <code>vllm_cuda.json</code> with{" "}
-          <code>cuda=true</code>. Do not mint those files on CPU.
-        </p>
-        <pre
-          style={{
-            marginTop: "0.75rem",
-            padding: "0.9rem 1rem",
-            background: "var(--panel)",
-            border: "1px solid var(--line)",
-            borderRadius: 10,
-            fontSize: "0.82rem",
-            overflowX: "auto",
-            color: "var(--muted)",
-          }}
-        >{`export GPU_SKU="1x A100-40GB" HF_TOKEN=...
+      {gpuReceiptsDone ? (
+        <section style={{ marginTop: "2rem" }}>
+          <h2>CUDA receipts — published</h2>
+          <p style={{ color: "var(--muted)" }}>
+            GPU receipts are live: <code>peft_gpu.json</code> and{" "}
+            <code>vllm_cuda.json</code> with <code>cuda=true</code> (GCP Tesla
+            T4 micro-run). Re-run operator scripts to refresh metrics or upgrade
+            to DomainForge 7B ladder depth.
+          </p>
+          <p className="hero-meta">
+            Runbook:{" "}
+            <a href="https://github.com/vpeetla-ai/modelforge-llmops/blob/main/docs/RUNPOD_ONE_SHOT.md">
+              docs/RUNPOD_ONE_SHOT.md
+            </a>
+            {" · "}
+            <a href="https://github.com/vpeetla-ai/modelforge-llmops/blob/main/docs/OPERATOR_CUDA_UNBLOCK.md">
+              operator unblock
+            </a>
+          </p>
+        </section>
+      ) : (
+        <section style={{ marginTop: "2rem" }}>
+          <h2>CUDA receipts — operator unblock</h2>
+          <p style={{ color: "var(--muted)" }}>
+            This demo host has no NVIDIA GPU. Phases 2–3 flip to{" "}
+            <code>ready</code> only after RunPod (or equivalent) produces{" "}
+            <code>peft_gpu.json</code> + <code>vllm_cuda.json</code> with{" "}
+            <code>cuda=true</code>. Do not mint those files on CPU.
+          </p>
+          <pre
+            style={{
+              marginTop: "0.75rem",
+              padding: "0.9rem 1rem",
+              background: "var(--panel)",
+              border: "1px solid var(--line)",
+              borderRadius: 10,
+              fontSize: "0.82rem",
+              overflowX: "auto",
+              color: "var(--muted)",
+            }}
+          >{`export GPU_SKU="1x A100-40GB" HF_TOKEN=...
 bash scripts/one_shot_gpu_receipts.sh
 # → docs/receipts/peft_gpu.json + vllm_cuda.json
 # then: commit, push, vercel --prod`}</pre>
-        <p className="hero-meta">
-          Runbook:{" "}
-          <a href="https://github.com/vpeetla-ai/modelforge-llmops/blob/main/docs/RUNPOD_ONE_SHOT.md">
-            docs/RUNPOD_ONE_SHOT.md
-          </a>
-          {" · "}
-          <a href="https://colab.research.google.com/github/vpeetla-ai/modelforge-llmops/blob/main/notebooks/cuda_receipts_colab.ipynb">
-            Colab PEFT notebook
-          </a>
-        </p>
-      </section>
+          <p className="hero-meta">
+            Runbook:{" "}
+            <a href="https://github.com/vpeetla-ai/modelforge-llmops/blob/main/docs/RUNPOD_ONE_SHOT.md">
+              docs/RUNPOD_ONE_SHOT.md
+            </a>
+            {" · "}
+            <a href="https://colab.research.google.com/github/vpeetla-ai/modelforge-llmops/blob/main/notebooks/cuda_receipts_colab.ipynb">
+              Colab PEFT notebook
+            </a>
+          </p>
+        </section>
+      )}
 
       <section style={{ marginTop: "2rem" }}>
         <h2>FinOps bridge</h2>

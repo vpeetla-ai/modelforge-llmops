@@ -40,7 +40,7 @@ export function listReceipts(): Receipt[] {
     {
       id: "peft-gpu",
       kind: "peft",
-      title: "QLoRA + DPO GPU receipt",
+      title: "CUDA PEFT GPU receipt",
       status: peftGpu ? "published" : peftSmoke ? "smoke" : "placeholder",
       summary: peftGpu
         ? "CUDA PEFT receipt published (see peft_gpu.json honesty — micro LoRA on T4 or DomainForge 7B ladder)."
