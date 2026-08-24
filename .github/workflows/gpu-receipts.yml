@@ -1,0 +1,111 @@
+name: GPU receipts (self-hosted)
+
+# Runs only when a self-hosted runner labeled [self-hosted, gpu] is registered.
+# Does not invent receipts on ubuntu-latest (no CUDA).
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "peft-only | vllm-only | both"
+        required: true
+        default: both
+        type: choice
+        options: [peft-only, vllm-only, both]
+
+jobs:
+  cuda-receipts:
+    runs-on: [self-hosted, gpu]
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Assert CUDA
+        run: |
+          nvidia-smi
+          python3 -c "import torch; assert torch.cuda.is_available(), 'no CUDA'"
+
+      - name: Checkout DomainForge sibling
+        if: ${{ inputs.mode == 'peft-only' || inputs.mode == 'both' }}
+        uses: actions/checkout@v4
+        with:
+          repository: vpeetla-ai/domainforge-rag-peft
+          path: domainforge-rag-peft
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: PEFT GPU receipt (DomainForge)
+        if: ${{ inputs.mode == 'peft-only' || inputs.mode == 'both' }}
+        env:
+          DOMAINFORGE_ROOT: ${{ github.workspace }}/domainforge-rag-peft
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          GPU_SKU: ${{ vars.GPU_SKU }}
+        run: |
+          set -euo pipefail
+          MF="${{ github.workspace }}"
+          DF="$DOMAINFORGE_ROOT"
+          SKU="${GPU_SKU:-self-hosted-cuda}"
+          mkdir -p "$MF/docs/receipts" "$MF/ui/public/receipts"
+          SMI_LOG="$MF/docs/receipts/_nvidia_smi.txt"
+          nvidia-smi | tee "$SMI_LOG"
+          cd "$DF"
+          python3 -m pip install -U pip -q
+          pip install -e ".[train,train-gpu]" -q
+          bash scripts/gpu_pipeline.sh
+          S0=$(ls data/eval/results/s0_baseline.json 2>/dev/null || ls data/eval/results/s0*.json 2>/dev/null | head -1)
+          S3=$(ls data/eval/results/s3_peft_hybrid.json 2>/dev/null || ls data/eval/results/s3*.json 2>/dev/null | head -1)
+          S4=$(ls data/eval/results/s4_dpo_peft.json 2>/dev/null || ls data/eval/results/s4*.json 2>/dev/null | head -1)
+          ADAPTER=$(ls -d adapters/s4-dpo 2>/dev/null || ls -d adapters/*dpo* 2>/dev/null | head -1 || true)
+          python3 scripts/export_modelforge_receipt.py \
+            --s0 "$S0" --s3 "$S3" --s4 "$S4" \
+            --adapter-uri "${ADAPTER:-adapters/s4-dpo}" \
+            --gpu "$SKU" \
+            --require-cuda \
+            --nvidia-smi-log "$SMI_LOG" \
+            --out "$MF/docs/receipts/peft_gpu.json"
+          cp "$MF/docs/receipts/peft_gpu.json" "$MF/ui/public/receipts/peft_gpu.json"
+
+      - name: Upstream vLLM CUDA metrics
+        if: ${{ inputs.mode == 'vllm-only' || inputs.mode == 'both' }}
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          GPU_SKU: ${{ vars.GPU_SKU }}
+        run: |
+          set -euo pipefail
+          MF="${{ github.workspace }}"
+          SKU="${GPU_SKU:-self-hosted-cuda}"
+          mkdir -p "$MF/docs/receipts" "$MF/ui/public/receipts"
+          SMI_LOG="$MF/docs/receipts/_nvidia_smi.txt"
+          nvidia-smi | tee "$SMI_LOG"
+          cd "$MF"
+          docker compose -f docker-compose.vllm.yml up -d
+          ok=0
+          for i in $(seq 1 60); do
+            if curl -sf http://127.0.0.1:8000/health >/dev/null; then ok=1; break; fi
+            sleep 10
+          done
+          [[ "$ok" == "1" ]] || { docker compose -f docker-compose.vllm.yml logs --tail=80; exit 1; }
+          python3 scripts/capture_vllm_metrics.py \
+            --base-url http://127.0.0.1:8000 \
+            --gpu "$SKU" \
+            --require-cuda \
+            --nvidia-smi-log "$SMI_LOG"
+          cp "$MF/docs/receipts/vllm_cuda.json" "$MF/ui/public/receipts/vllm_cuda.json"
+
+      - name: Validate DoD receipts
+        run: |
+          if [[ "${{ inputs.mode }}" == "both" ]]; then
+            make check-dod
+          else
+            python3 scripts/validate_receipts.py
+          fi
+
+      - name: Upload receipts
+        uses: actions/upload-artifact@v4
+        with:
+          name: modelforge-gpu-receipts
+          path: |
+            docs/receipts/peft_gpu.json
+            docs/receipts/vllm_cuda.json
+            ui/public/receipts/peft_gpu.json
+            ui/public/receipts/vllm_cuda.json
+          if-no-files-found: warn
