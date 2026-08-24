@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_colab_shaped_peft_gpu_validates(tmp_path: Path) -> None:
+    tmp_path.mkdir(parents=True, exist_ok=True)
     receipt = {
         "status": "gpu",
         "cuda": True,
