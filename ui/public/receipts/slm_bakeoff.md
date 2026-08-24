@@ -21,3 +21,14 @@
 - Prefer SLM when schema_pass ≥ API and p50 latency / $ wins for private data.
 - Prefer API when long-context reasoning dominates and data class allows cloud.
 
+## FinOps bridge (Phase 4.5)
+
+| Signal | Estimate / link |
+|--------|-----------------|
+| Local SLM marginal $ | ~$0 inference on already-owned CPU/GPU (electricity only) |
+| Cloud API comparator | Deferred — no API key on capture host; re-run with `OPENAI_API_KEY` for $/1k tokens row |
+| Org metering | [agent-finops](https://github.com/vpeetla-ai/agent-finops) budgets + breach signals |
+| Attribution path | App selects → [aegis-llm-gateway](https://github.com/vpeetla-ai/aegis-llm-gateway) enforces/records tokens (ADR-028/029) |
+
+**Panel line:** SLM wins this golden suite on schema_pass; FinOps owns the meter — ModelForge publishes the bake-off, agent-finops owns the budget.
+

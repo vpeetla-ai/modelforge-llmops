@@ -89,3 +89,10 @@ curl -s localhost:8200/v1/probes | jq
 - [vllm-architecture-lab](https://github.com/vpeetla-ai/vllm-architecture-lab)
 - [aegis-llm-gateway](https://github.com/vpeetla-ai/aegis-llm-gateway)
 - [ai-architecture-portfolio](https://github.com/vpeetla-ai/ai-architecture-portfolio)
+
+## Panel + architecture notes
+
+- [Quant / serve trade-offs](docs/QUANT_SERVE_TRADEOFFS.md) — AWQ/FP8/QLoRA honesty table
+- Live demo: https://modelforge-gamma.vercel.app
+- Receipts: `docs/receipts/` (mirrored to `ui/public/receipts/`)
+

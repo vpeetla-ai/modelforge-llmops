@@ -23,9 +23,36 @@ type Receipt = {
   title: string;
   status: string;
   summary: string;
+  path: string | null;
+  links: string[];
 };
 
 const API = process.env.NEXT_PUBLIC_API_URL || "";
+
+const DECISIONS = [
+  {
+    title: "Buy API",
+    when: "Long-context reasoning, data class allows cloud, time-to-value beats unit cost.",
+  },
+  {
+    title: "RAG",
+    when: "Facts change often; citations required; PEFT would bake stale knowledge.",
+  },
+  {
+    title: "PEFT (QLoRA/DPO)",
+    when: "Stable schema/behavior; eval Δ justifies adapter ops (DomainForge → receipt).",
+  },
+  {
+    title: "Self-host SLM / vLLM",
+    when: "Privacy, latency, or $ at volume wins bake-off; CUDA metrics on Serve receipt.",
+  },
+];
+
+function publicReceiptHref(path: string | null): string | null {
+  if (!path) return null;
+  const name = path.split("/").pop();
+  return name ? `/receipts/${name}` : null;
+}
 
 export default function HomePage() {
   const [posture, setPosture] = useState<Posture | null>(null);
@@ -45,6 +72,12 @@ export default function HomePage() {
       .catch((e) => setError(String(e)));
   }, []);
 
+  const published = receipts.filter((r) => r.status === "published").length;
+  const smoke = receipts.filter((r) => r.status === "smoke").length;
+  const pending = receipts.filter(
+    (r) => r.status === "placeholder" || r.status === "planned",
+  ).length;
+
   return (
     <main>
       <div className="hero">
@@ -55,6 +88,11 @@ export default function HomePage() {
           Agents decide what to do — ModelForge decides which weights, where they
           run, and how we prove it.
         </p>
+        <p className="hero-meta">
+          Live honesty:{" "}
+          <strong>{published}</strong> published · <strong>{smoke}</strong> smoke
+          · <strong>{pending}</strong> GPU-pending
+        </p>
       </div>
 
       {error ? (
@@ -63,6 +101,44 @@ export default function HomePage() {
           local UI-only, run `npm run dev` in ui/.
         </p>
       ) : null}
+
+      <section className="panel-script">
+        <h2>30-second CAIO rebuttal</h2>
+        <blockquote>
+          I am not agents-only. Agents are how work gets done; the{" "}
+          <em>model plane</em> is how I decide buy vs RAG vs PEFT vs self-host.
+          ModelForge is the control UI — DomainForge trains adapters, CUDA vLLM
+          serves them, SLM bake-off proves when small models win, and the LLM
+          gateway enforces + records.
+        </blockquote>
+        <p className="hero-meta">
+          Proof links:{" "}
+          <a href="https://modelforge-gamma.vercel.app">this demo</a> ·{" "}
+          <a href="https://github.com/vpeetla-ai/domainforge-rag-peft">
+            DomainForge
+          </a>{" "}
+          ·{" "}
+          <a href="https://github.com/vpeetla-ai/ai-architecture-portfolio/blob/main/adr/ADR-034-modelforge-model-plane.md">
+            ADR-034
+          </a>
+        </p>
+      </section>
+
+      <section>
+        <h2>Buy · RAG · PEFT · self-host</h2>
+        <p className="hero-meta">
+          Panel decision tree — pick the cheapest honest path; receipts prove the
+          choice.
+        </p>
+        <div className="grid">
+          {DECISIONS.map((d) => (
+            <div className="card" key={d.title}>
+              <h3>{d.title}</h3>
+              <p>{d.when}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
       {posture ? (
         <>
@@ -87,8 +163,8 @@ export default function HomePage() {
       <section style={{ marginTop: "2.5rem" }}>
         <h2 style={{ marginBottom: "0.25rem" }}>Receipts</h2>
         <p style={{ color: "var(--muted)", marginTop: 0 }}>
-          Placeholders until Phases 2–4 publish GPU / bake-off artifacts. Posture
-          stays honest.
+          Published artifacts are clickable. Smoke ≠ GPU. Placeholders mean CUDA
+          host still required (RunPod) — posture stays honest.
         </p>
         <table>
           <thead>
@@ -97,19 +173,44 @@ export default function HomePage() {
               <th>Title</th>
               <th>Status</th>
               <th>Summary</th>
+              <th>Artifact</th>
             </tr>
           </thead>
           <tbody>
-            {receipts.map((r) => (
-              <tr key={r.id}>
-                <td>{r.kind}</td>
-                <td>{r.title}</td>
-                <td>{r.status}</td>
-                <td>{r.summary}</td>
-              </tr>
-            ))}
+            {receipts.map((r) => {
+              const href = publicReceiptHref(r.path);
+              return (
+                <tr key={r.id}>
+                  <td>{r.kind}</td>
+                  <td>{r.title}</td>
+                  <td>
+                    <span className={`pill ${r.status}`}>{r.status}</span>
+                  </td>
+                  <td>{r.summary}</td>
+                  <td>
+                    {href ? (
+                      <a href={href} target="_blank" rel="noreferrer">
+                        open
+                      </a>
+                    ) : (
+                      <span style={{ color: "var(--muted)" }}>—</span>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
+      </section>
+
+      <section style={{ marginTop: "2rem" }}>
+        <h2>FinOps bridge</h2>
+        <p style={{ color: "var(--muted)" }}>
+          Model choice without metering is incomplete. Bake-off cost narrative
+          lands in the SLM memo; shared budgets/breach signals live in{" "}
+          <a href="https://github.com/vpeetla-ai/agent-finops">agent-finops</a>{" "}
+          (ADR-028/029 gateway records tokens for attribution).
+        </p>
       </section>
 
       {posture ? (

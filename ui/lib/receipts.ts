@@ -11,6 +11,13 @@ export type Receipt = {
   links: string[];
 };
 
+/** Public URL under ui/public/receipts for gallery deep-links. */
+export function receiptPublicHref(path: string | null): string | null {
+  if (!path) return null;
+  const name = path.split("/").pop();
+  return name ? `/receipts/${name}` : null;
+}
+
 const RECEIPTS_DIR = path.join(process.cwd(), "..", "docs", "receipts");
 const PUBLIC_RECEIPTS = path.join(process.cwd(), "public", "receipts");
 
