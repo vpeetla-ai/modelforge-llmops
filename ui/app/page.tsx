@@ -204,6 +204,37 @@ export default function HomePage() {
       </section>
 
       <section style={{ marginTop: "2rem" }}>
+        <h2>CUDA receipts — operator unblock</h2>
+        <p style={{ color: "var(--muted)" }}>
+          This demo host has no NVIDIA GPU. Phases 2–3 flip to{" "}
+          <code>ready</code> only after RunPod (or equivalent) produces{" "}
+          <code>peft_gpu.json</code> + <code>vllm_cuda.json</code> with{" "}
+          <code>cuda=true</code>. Do not mint those files on CPU.
+        </p>
+        <pre
+          style={{
+            marginTop: "0.75rem",
+            padding: "0.9rem 1rem",
+            background: "var(--panel)",
+            border: "1px solid var(--line)",
+            borderRadius: 10,
+            fontSize: "0.82rem",
+            overflowX: "auto",
+            color: "var(--muted)",
+          }}
+        >{`export GPU_SKU="1x A100-40GB" HF_TOKEN=...
+bash scripts/one_shot_gpu_receipts.sh
+# → docs/receipts/peft_gpu.json + vllm_cuda.json
+# then: commit, push, vercel --prod`}</pre>
+        <p className="hero-meta">
+          Runbook:{" "}
+          <a href="https://github.com/vpeetla-ai/modelforge-llmops/blob/main/docs/RUNPOD_ONE_SHOT.md">
+            docs/RUNPOD_ONE_SHOT.md
+          </a>
+        </p>
+      </section>
+
+      <section style={{ marginTop: "2rem" }}>
         <h2>FinOps bridge</h2>
         <p style={{ color: "var(--muted)" }}>
           Model choice without metering is incomplete. Bake-off cost narrative
