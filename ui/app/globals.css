@@ -161,3 +161,180 @@ section h2 {
   color: var(--muted);
   border-color: var(--line);
 }
+
+.platform-nav {
+  border-bottom: 1px solid var(--line);
+  background: rgba(12, 17, 23, 0.92);
+  backdrop-filter: blur(8px);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.platform-nav-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+}
+
+.platform-brand {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.platform-tabs {
+  display: flex;
+  gap: 0.35rem;
+  flex: 1;
+}
+
+.platform-tab {
+  font-size: 0.82rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 8px;
+  color: var(--muted);
+  text-decoration: none;
+  border: 1px solid transparent;
+}
+
+.platform-tab.active,
+.platform-tab:hover {
+  color: var(--text);
+  border-color: var(--line);
+  background: var(--panel);
+}
+
+.platform-ext {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.taxonomy-shell {
+  margin-top: 1.5rem;
+}
+
+.taxonomy-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.taxonomy-tab {
+  font-size: 0.78rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.taxonomy-tab.active {
+  color: var(--accent);
+  border-color: #2f6f5f;
+}
+
+.tax-list {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.tax-lede {
+  color: var(--muted);
+  font-size: 0.92rem;
+  margin: 0 0 0.5rem;
+}
+
+.tax-card {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+  overflow: hidden;
+}
+
+.tax-card-head {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  background: transparent;
+  border: none;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.tax-card-head h3 {
+  margin: 0.35rem 0 0;
+  font-size: 1rem;
+}
+
+.tax-platform {
+  margin: 0.25rem 0 0;
+  font-size: 0.82rem;
+  color: var(--accent);
+}
+
+.tax-chevron {
+  color: var(--muted);
+  font-size: 1.1rem;
+}
+
+.tax-card-body {
+  padding: 0 1rem 1rem;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.tax-limit {
+  margin-top: 0.65rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid #6e5a2e;
+  color: #e8d4a8;
+  font-size: 0.85rem;
+}
+
+.classical-stack {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.classical-stack li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+}
+
+.classical-stack p {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.compose-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.compose-card h3 {
+  margin: 0.5rem 0 0.25rem;
+}

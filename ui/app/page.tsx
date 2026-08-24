@@ -145,6 +145,19 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section style={{ marginTop: "2rem" }}>
+        <h2>Taxonomy glassbox</h2>
+        <p style={{ color: "var(--muted)" }}>
+          LoRA · QLoRA · Multi-LoRA · task types · classical ML stack — full tabbed taxonomy with
+          honesty labels per row.
+        </p>
+        <p className="hero-meta">
+          <a href="/taxonomy">Open taxonomy tab →</a>
+          {" · "}
+          <a href="https://venkat-ai.com/model-plane">venkat-ai.com/model-plane ↗</a>
+        </p>
+      </section>
+
       {posture ? (
         <>
           <p style={{ marginTop: "1.5rem", color: "var(--muted)" }}>

@@ -1,4 +1,5 @@
 import "./globals.css";
+import { PlatformNav } from "@/components/PlatformNav";
 
 export const metadata = {
   title: "ModelForge — Model Plane",
@@ -8,7 +9,10 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <PlatformNav />
+        {children}
+      </body>
     </html>
   );
 }
