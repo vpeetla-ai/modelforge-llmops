@@ -28,7 +28,7 @@ def list_receipts() -> list[Receipt]:
         Receipt(
             id="peft-gpu",
             kind="peft",
-            title="QLoRA + DPO GPU receipt",
+            title="CUDA PEFT GPU receipt",
             status="published" if peft.exists() else "placeholder",
             summary="S0 vs S3 vs S4 eval delta after CUDA QLoRA/DPO run (DomainForge).",
             path="docs/receipts/peft_gpu.json" if peft.exists() else None,
