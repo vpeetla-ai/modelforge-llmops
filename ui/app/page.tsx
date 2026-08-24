@@ -228,8 +228,8 @@ bash scripts/one_shot_gpu_receipts.sh
 # then: commit, push, vercel --prod`}</pre>
         <p className="hero-meta">
           Runbook:{" "}
-          <a href="https://github.com/vpeetla-ai/modelforge-llmops/blob/main/docs/RUNPOD_ONE_SHOT.md">
-            docs/RUNPOD_ONE_SHOT.md
+          <a href="https://github.com/vpeetla-ai/modelforge-llmops/blob/main/docs/RUNPOD_ONE_SHOT.md</a> · <a href="https://colab.research.google.com/github/vpeetla-ai/modelforge-llmops/blob/main/notebooks/cuda_receipts_colab.ipynb">Colab PEFT notebook">
+            docs/RUNPOD_ONE_SHOT.md</a> · <a href="https://colab.research.google.com/github/vpeetla-ai/modelforge-llmops/blob/main/notebooks/cuda_receipts_colab.ipynb">Colab PEFT notebook
           </a>
         </p>
       </section>

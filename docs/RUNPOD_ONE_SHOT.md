@@ -58,3 +58,13 @@ Then update `ai-architecture-portfolio/docs/MODEL_PLANE_100_TRACKER.md` Phases 2
 | `peft_gpu.json` | Only after `--require-cuda` export |
 | Architecture Lab Path B | Concepts — never as `vllm_cuda.json` |
 | tiny-gpt2 adapters | Never as peft_gpu |
+
+## Alternate: Colab PEFT micro-receipt
+
+For a **CUDA PEFT** micro-receipt without RunPod (TinyLlama QLoRA + measured schema delta):
+
+[Open `notebooks/cuda_receipts_colab.ipynb` in Colab](https://colab.research.google.com/github/vpeetla-ai/modelforge-llmops/blob/main/notebooks/cuda_receipts_colab.ipynb)
+
+- Writes `peft_gpu.json` only (real CUDA train + eval)
+- Does **not** write `vllm_cuda.json` — still requires this RunPod one-shot for upstream vLLM
+
