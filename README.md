@@ -31,14 +31,14 @@ UI / API (this repo)
 | Component | Status | Notes |
 |-----------|--------|-------|
 | Posture API (`/v1/posture`) | ✅ | Machine-readable honesty |
-| Receipts gallery API | ✅ | PEFT / vLLM / SLM placeholders → fill in Phases 2–4 |
+| Receipts gallery API | ✅ | PEFT / vLLM / SLM — real receipts published, see below |
 | Model Plane UI | 🟡 | MVP tabs; polish in Phase 1 |
 | DomainForge live probe | 🟡 | Optional `DOMAINFORGE_URL` |
 | LLM gateway probe | 🟡 | Optional `LLM_GATEWAY_URL` |
-| CUDA vLLM compose | ⬜ | Phase 3 — `docker-compose.vllm.yml` |
-| GPU PEFT receipt artifact | ⬜ | Phase 2 — not claimed until file exists |
-| SLM bake-off table | ⬜ | Phase 4 |
-| Always-on GPU | ❌ | Ephemeral RunPod; free tier is CPU/API |
+| CUDA vLLM compose | ✅ | `docker-compose.vllm.yml` — validated against a real self-hosted GPU runner; receipt: `docs/receipts/vllm_cuda.json` (run `vllm-20260824T011254Z`, Tesla T4, 53.66 tok/s, p50 121.94ms) |
+| GPU PEFT receipt artifact | ✅ | `docs/receipts/peft_gpu.json` (run `peft-20260824T005657Z`, Tesla T4, LoRA-fp16) — CI (`ci.yml`) now runs `validate_receipts.py --require-gpu`, so this can't silently regress to unclaimed |
+| SLM bake-off table | 🟡 | `docs/receipts/slm_bakeoff.md` — real local-Ollama run (`llama3.2:1b`, 3/3 schema-pass) done; cloud-API comparator row deferred (no API key on capture host) |
+| Always-on GPU | ❌ | Ephemeral self-hosted runner via `gpu-receipts.yml` (`workflow_dispatch`, GPU-labeled); free tier is CPU/API between runs |
 
 ## Quick start
 

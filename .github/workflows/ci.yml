@@ -40,9 +40,12 @@ jobs:
           test -f public/receipts/peft_smoke.json
           test -f public/receipts/gateway_routing_sample.json
           test -f public/receipts/slm_bakeoff.md
-          # GPU/CUDA receipts must NOT be claimed by accidental empty stubs
-          test ! -f public/receipts/peft_gpu.json
-          test ! -f public/receipts/vllm_cuda.json
       - name: Validate receipt honesty gates
         working-directory: .
-        run: python3 scripts/validate_receipts.py
+        run: |
+          # --require-gpu: real CUDA PEFT + upstream vLLM receipts have been published
+          # (see docs/receipts/peft_gpu.json / vllm_cuda.json, run_ids peft-20260824T005657Z
+          # and vllm-20260824T011254Z). This is now a positive requirement, not just a
+          # 'don't fake it' guard -- validate_receipts.py already checks status=gpu,
+          # cuda=true, non-tiny base_model, and real ttft/tok_per_s metrics.
+          python3 scripts/validate_receipts.py --require-gpu
