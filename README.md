@@ -35,8 +35,8 @@ UI / API (this repo)
 | Model Plane UI | 🟡 | MVP tabs; polish in Phase 1 |
 | DomainForge live probe | 🟡 | Optional `DOMAINFORGE_URL` |
 | LLM gateway probe | 🟡 | Optional `LLM_GATEWAY_URL` |
-| CUDA vLLM compose | ✅ | `docker-compose.vllm.yml` — validated against a real self-hosted GPU runner; receipt: `docs/receipts/vllm_cuda.json` (run `vllm-20260824T011254Z`, Tesla T4, 53.66 tok/s, p50 121.94ms) |
-| GPU PEFT receipt artifact | ✅ | `docs/receipts/peft_gpu.json` (run `peft-20260824T005657Z`, Tesla T4, LoRA-fp16) — CI (`ci.yml`) now runs `validate_receipts.py --require-gpu`, so this can't silently regress to unclaimed |
+| CUDA vLLM compose | ✅ | `docker-compose.vllm.yml` — validated against a real self-hosted GPU runner serving its actual configured model; receipt: `docs/receipts/vllm_cuda.json` (run `vllm-20260903T225117Z`, 1x NVIDIA L4, Mistral-7B-Instruct-v0.3, 13.74 tok/s, p50 371.67ms) |
+| GPU PEFT receipt artifact | ✅ | `docs/receipts/peft_gpu.json` (run `peft-20260824T005657Z`, Tesla T4, LoRA-fp16) — CI (`ci.yml`) now runs `validate_receipts.py --require-gpu`, so this can't silently regress to unclaimed. A newer real QLoRA+DPO run on Mistral-7B/L4 (2026-09-03) is pending commit — training completed for real, receipt regeneration in progress |
 | SLM bake-off table | 🟡 | `docs/receipts/slm_bakeoff.md` — real local-Ollama run (`llama3.2:1b`, 3/3 schema-pass) done; cloud-API comparator row deferred (no API key on capture host) |
 | Always-on GPU | ❌ | Ephemeral self-hosted runner via `gpu-receipts.yml` (`workflow_dispatch`, GPU-labeled); free tier is CPU/API between runs |
 
