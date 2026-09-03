@@ -64,13 +64,18 @@ jobs:
           python3 -m pip install -U pip -q
           pip install -e ".[train,train-gpu]" -q
           bash scripts/gpu_pipeline.sh
-          S0=$(ls data/eval/results/s0_baseline.json 2>/dev/null || ls data/eval/results/s0*.json 2>/dev/null | head -1)
-          S3=$(ls data/eval/results/s3_peft_hybrid.json 2>/dev/null || ls data/eval/results/s3*.json 2>/dev/null | head -1)
-          S4=$(ls data/eval/results/s4_dpo_peft.json 2>/dev/null || ls data/eval/results/s4*.json 2>/dev/null | head -1)
-          ADAPTER=$(ls -d adapters/s4-dpo 2>/dev/null || ls -d adapters/*dpo* 2>/dev/null | head -1 || true)
+          # Real training config/timing comes from each stage's own training_manifest.json
+          # (written by train_qlora()/train_dpo() next to the adapter weights) -- NOT from
+          # data/eval/results/s3*.json / s4*.json. Those are committed fixtures that
+          # domainforge-eval compare never overwrites (it only ever scores S0/S1/S2), so
+          # reading them here would silently attach stale, unrelated numbers to this run's
+          # adapter. See export_modelforge_receipt.py's own docstring for the full story.
+          SFT_MANIFEST=$(ls adapters/domainforge-triage-v0/training_manifest.json 2>/dev/null || ls adapters/*/training_manifest.json 2>/dev/null | grep -v dpo | head -1)
+          DPO_MANIFEST=$(ls adapters/domainforge-triage-dpo-v0/training_manifest.json 2>/dev/null || ls adapters/*dpo*/training_manifest.json 2>/dev/null | head -1)
+          ADAPTER=$(ls -d adapters/domainforge-triage-dpo-v0 2>/dev/null || ls -d adapters/*dpo* 2>/dev/null | head -1 || true)
           python3 scripts/export_modelforge_receipt.py \
-            --s0 "$S0" --s3 "$S3" --s4 "$S4" \
-            --adapter-uri "${ADAPTER:-adapters/s4-dpo}" \
+            --sft-manifest "$SFT_MANIFEST" --dpo-manifest "$DPO_MANIFEST" \
+            --adapter-uri "${ADAPTER:-adapters/domainforge-triage-dpo-v0}" \
             --gpu "$SKU" \
             --require-cuda \
             --nvidia-smi-log "$SMI_LOG" \
@@ -97,6 +102,10 @@ jobs:
             sleep 10
           done
           [[ "$ok" == "1" ]] || { docker compose -f docker-compose.vllm.yml logs --tail=80; exit 1; }
+          # torch is already present system-wide (the "Assert CUDA" step above
+          # imports it successfully) but httpx is not -- this step never had
+          # its own dependency install, unlike the PEFT step's dedicated venv.
+          python3 -m pip install --break-system-packages -q httpx
           python3 scripts/capture_vllm_metrics.py \
             --base-url http://127.0.0.1:8000 \
             --gpu "$SKU" \
