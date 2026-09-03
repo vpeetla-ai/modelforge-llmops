@@ -17,13 +17,23 @@
 
 ## Architecture
 
-```text
-UI / API (this repo)
-  ├── PEFT receipts     → DomainForge (QLoRA SFT + DPO)
-  ├── CUDA serve        → upstream vLLM + LoRA modules (GPU host)
-  ├── SLM bake-off      → Ollama 3B/7B vs API on golden suite
-  ├── Ops bridge        → aegis-llm-gateway (enforce + record)
-  └── Concepts (linked) → vLLM Architecture Lab (educational only)
+Full diagram + component-by-component honesty notes: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+```mermaid
+flowchart LR
+    UI["Next.js UI\nposture + receipt gallery"] --> API["FastAPI\n/v1/posture · /receipts · /plane"]
+    API --> Domain["build_posture() / list_receipts()\nstatus = real file existence, not a flag"]
+    Domain -- "checks" --> Receipts["docs/receipts/\npeft_gpu.json · vllm_cuda.json · slm_bakeoff.md"]
+    Domain -. optional probe .-> DF["domainforge-rag-peft"]
+    Domain -. optional probe .-> GW["aegis-llm-gateway"]
+
+    subgraph CI["gpu-receipts.yml (self-hosted GPU runner)"]
+        direction TB
+        Peft["PEFT step\ncheckout DomainForge -> gpu_pipeline.sh"] --> Val["validate_receipts.py\n--require-gpu"]
+        Vllm["vLLM step\ndocker compose vllm/vllm-openai"] --> Val
+    end
+    Peft -- writes --> Receipts
+    Vllm -- writes --> Receipts
 ```
 
 ## Honest status
