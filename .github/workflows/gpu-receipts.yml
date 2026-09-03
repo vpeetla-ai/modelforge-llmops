@@ -39,6 +39,11 @@ jobs:
           DOMAINFORGE_ROOT: ${{ github.workspace }}/domainforge-rag-peft
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           GPU_SKU: ${{ vars.GPU_SKU }}
+          # PyTorch's own suggested mitigation for the SFT->DPO OOM: real run
+          # showed "21.84 GiB memory in use" on a 22GB L4 with PyTorch's error
+          # itself naming fragmentation as the cause. Belt-and-suspenders on
+          # top of the explicit gc.collect()/empty_cache() between stages.
+          PYTORCH_CUDA_ALLOC_CONF: "expandable_segments:True"
         run: |
           set -euo pipefail
           MF="${{ github.workspace }}"
