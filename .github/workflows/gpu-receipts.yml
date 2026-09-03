@@ -54,7 +54,7 @@ jobs:
           # (3.13 on Debian trixie) -- use a uv-managed Python 3.11 venv instead of
           # loosening those pins blind, since newer transformers/trl have known
           # breaking API changes that would risk silently changing training behavior.
-          "$HOME/.local/bin/uv" venv --python 3.11 .venv-gpu
+          "$HOME/.local/bin/uv" venv --python 3.11 --seed .venv-gpu
           source .venv-gpu/bin/activate
           python3 -m pip install -U pip -q
           pip install -e ".[train,train-gpu]" -q
