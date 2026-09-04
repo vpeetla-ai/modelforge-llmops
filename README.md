@@ -11,6 +11,8 @@
 
 **Hire hero for the Model Plane.** ModelForge is where a CAIO clicks when they ask about SLMs, fine-tuning, CUDA vLLM, and LLMOps — not another agent demo.
 
+This is personal work — a public reference you can inspect.
+
 > Agents decide *what to do*. ModelForge decides *which weights, where they run, and how we prove it.*
 
 **Plan:** [MODEL_PLANE_100_PLAN](https://github.com/vpeetla-ai/ai-architecture-portfolio/blob/main/docs/MODEL_PLANE_100_PLAN.md) · **ADR-034** · Tracker
