@@ -35,7 +35,7 @@ jobs:
             exit 1
           fi
           python3 scripts/slm_bakeoff.py \
-            --base-url https://api.groq.com/openai/v1 \
+            --base-url https://api.groq.com/openai \
             --model "${{ inputs.model }}" \
             --api-key "$GROQ_API_KEY" \
             --label "groq/${{ inputs.model }} (cloud API)"
