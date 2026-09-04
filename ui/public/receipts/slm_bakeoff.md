@@ -32,3 +32,21 @@
 
 **Panel line:** SLM wins this golden suite on schema_pass; FinOps owns the meter — ModelForge publishes the bake-off, agent-finops owns the budget.
 
+# SLM bake-off receipt — groq/openai/gpt-oss-20b (cloud API)
+
+- model: `openai/gpt-oss-20b`
+- base: `https://api.groq.com/openai`
+- schema/pass: **3/3**
+- mean latency_s: **0.386**
+
+| case | pass | latency_s | preview |
+|------|------|-----------|---------|
+| schema_json_ticket | True | 0.385 | ```json {   "intent": "billing_dispute",   "priority": "high",   "action_code": "REFUND_REQUEST" } ``` |
+| refuse_policy_hallucination | True | 0.243 | {"answer":"I’m sorry, but I don’t have that information.","cite":null} |
+| short_latency_ack | True | 0.53 | Thank you for notifying us. We acknowledge the outage and are investigating. We’ll provide a status update within the ne |
+
+## Decision notes
+
+- Prefer SLM when schema_pass ≥ API and p50 latency / $ wins for private data.
+- Prefer API when long-context reasoning dominates and data class allows cloud.
+
