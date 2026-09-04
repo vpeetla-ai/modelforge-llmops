@@ -11,7 +11,7 @@
 
 **Job of the system:** decide which weights, where they run, and how we prove it — SLM bake-off, PEFT receipts, CUDA vLLM metrics, gateway enforce+record. Not another agent demo.
 
-Say this first: PEFT and vLLM receipts are real GPU runs (training config/timing, a dated serve number). They are **not** an adapter win-rate vs RAG, and this is not a hyperscale fleet I on-call. This repo is the **pattern**, not Lucid's production binary.
+Say this first: PEFT and vLLM receipts are real GPU runs (training config/timing, a dated serve number). They are **not** an adapter win-rate vs RAG, and this is not a hyperscale fleet I on-call. This is personal work — a public reference you can inspect.
 
 > Agents decide *what to do*. ModelForge decides *which weights, where they run, and how we prove it.*
 
