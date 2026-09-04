@@ -18,7 +18,17 @@ jobs:
     runs-on: [self-hosted, gpu]
     timeout-minutes: 180
     steps:
+      # clean:false is load-bearing on this self-hosted runner: a real run lost an
+      # entire completed training pass (378-example SFT + 16-pair DPO, ~30min GPU
+      # time) because this step's default `git clean -ffdx` wipes ANY untracked
+      # content in the workspace -- including the DomainForge sibling checkout
+      # below, which lives inside this same directory (github.workspace). A later
+      # mode=vllm-only run, despite skipping the DomainForge checkout step itself,
+      # still ran this top-level checkout first and silently deleted the prior
+      # run's adapters/ + training_manifest.json before anyone could read them.
       - uses: actions/checkout@v4
+        with:
+          clean: false
 
       - name: Assert CUDA
         run: |
