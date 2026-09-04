@@ -1,0 +1,47 @@
+name: SLM bake-off (cloud API)
+
+# Runs the same golden-suite bake-off used for the local-Ollama leg
+# (docs/receipts/slm_bakeoff.md) against a real cloud API, so the
+# comparator row that's been deferred since 2026-08-24 (no key on the
+# capture host) can finally be filled in for real. Never runs on a
+# schedule -- workflow_dispatch only, so it never silently spends API
+# budget.
+
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: "Groq model id"
+        required: true
+        default: "llama-3.1-8b-instant"
+
+jobs:
+  bakeoff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install deps
+        run: pip install httpx
+      - name: Run cloud bake-off
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -z "${GROQ_API_KEY:-}" ]; then
+            echo "GROQ_API_KEY not set -- refusing to write a fake cloud receipt"
+            exit 1
+          fi
+          python3 scripts/slm_bakeoff.py \
+            --base-url https://api.groq.com/openai/v1 \
+            --model "${{ inputs.model }}" \
+            --api-key "$GROQ_API_KEY" \
+            --label "groq/${{ inputs.model }} (cloud API)"
+          cat docs/receipts/slm_bakeoff.md
+      - name: Upload receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: slm-bakeoff-cloud-receipt
+          path: docs/receipts/slm_bakeoff.md
