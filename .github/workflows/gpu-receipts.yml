@@ -141,3 +141,14 @@ jobs:
             ui/public/receipts/peft_gpu.json
             ui/public/receipts/vllm_cuda.json
           if-no-files-found: warn
+
+      - name: Stop vLLM (always)
+        # Real failure this fixes: a prior mode=vllm-only run's `docker compose up
+        # -d` was never torn down, so its container sat holding ~20GB of the L4's
+        # 23GB VRAM indefinitely. The next PEFT-only run then failed loading even
+        # a 4-bit-quantized 7B model, because HF's device_map="auto" tried to
+        # offload layers to CPU into VRAM that looked full. `if: always()` so this
+        # runs whether earlier steps succeeded or failed -- a failed run must not
+        # leave the GPU occupied for whatever runs next.
+        if: always()
+        run: docker compose -f docker-compose.vllm.yml down || true
