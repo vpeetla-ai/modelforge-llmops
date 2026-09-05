@@ -85,12 +85,14 @@ flowchart TB
 - **`list_receipts()`** (`domain/receipts.py`) is the single source of truth the UI's receipt gallery
   renders from — same file-existence rule, so the gallery can't show a "published" badge for a
   receipt that isn't actually there.
-- **`gpu-receipts.yml`** is the only thing that ever writes real GPU receipts. It runs on a
-  self-hosted runner (rented GPU, registered ephemerally — see the README's "Always-on GPU" honesty
-  note) via `workflow_dispatch`, never on `ubuntu-latest` (no CUDA there, so it structurally cannot
-  fabricate a GPU claim). The PEFT step checks out `domainforge-rag-peft` fresh as a sibling
-  directory and runs its real training pipeline; the vLLM step runs actual upstream
-  `vllm/vllm-openai` via `docker-compose.vllm.yml`, not a simulator.
+- **`gpu-receipts.yml`** is the only thing that ever writes real GPU receipts.
+  - Runs on a self-hosted runner (rented GPU, registered ephemerally — see the README's "Always-on
+    GPU" honesty note) via `workflow_dispatch`, never on `ubuntu-latest` — no CUDA there, so it
+    structurally cannot fabricate a GPU claim.
+  - PEFT step: checks out `domainforge-rag-peft` fresh as a sibling directory, runs its real
+    training pipeline.
+  - vLLM step: runs actual upstream `vllm/vllm-openai` via `docker-compose.vllm.yml` — not a
+    simulator.
 - **`validate_receipts.py --require-gpu`** is a CI gate, not a suggestion: it refuses to let a
   `peft_smoke.json`-shaped placeholder claim `status=gpu`, and refuses a tiny/smoke `base_model`
   (e.g. `sshleifer/tiny-gpt2`) from ever being written as `peft_gpu.json`.
